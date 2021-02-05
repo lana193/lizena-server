@@ -6,13 +6,11 @@ export const filterObjArrReduce = ((objToFilter, key) => {
     return result;
 });
 
-export const filterObjArrMap = ((objToFilter, key, folder) => {
+export const filterObjArrMap = ((objToFilter, folder) => {
     const result = objToFilter.map((item) => {
-        const image = item[key].replace(/\\/g, "/");
+        const image = item;//[key].replace(/\\/g, "/");
         console.log(333, image);
-        // return image;
-        return `//localhost:3003${image.split('public')[1]}`;
-        // return `//lizena/public/uploads/${folder}/${image.split('public')[1]}`;
+        return `https://www.lizena.com.ua/uploads/${folder}/${image}`;
     });
     return result;
 });
@@ -24,3 +22,4 @@ export const filterObjArrForEach = ((objToFilter, key) => {
     });
     return result;
 });
+

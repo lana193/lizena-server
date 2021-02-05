@@ -9,9 +9,12 @@ import { projectsRouter } from './src/route/projects';
 import { authRouter } from './src/route/auth';
 import { contactsRouter } from './src/route/contacts';
 import { forSaleRouter } from './src/route/for-sale';
-import cors from 'cors';
+// import cors from 'cors';
+// import corsOptions from './config/cors';
 
 const app = express();
+// use it before all route definitions
+// app.use(cors());
 
 // Bodyparser middleware
 app.use(
@@ -19,8 +22,6 @@ app.use(
     extended: false
   })
 );
-
-app.use(cors());
 
 app.use(bodyParser.json());
 
@@ -52,8 +53,12 @@ app.use('/lizena', projectsRouter);
 app.use('/lizena', authRouter);
 app.use('/lizena', contactsRouter);
 app.use('/lizena', forSaleRouter);
-app.use('*', (req, res) => res.status(404).send('Not found'));
+// app.use('/');
+// app.use('*', (req, res) => res.status(404).send('Not found'));
 
+const hostname = '185.229.224.187';
 const port = process.env.PORT || 3003;
 
-app.listen(port, () => console.log(`Server up and running on port ${port} !`));
+app.listen(port, hostname, () => {
+	console.log(`Server running at http://${hostname}:${port}/`);
+});

@@ -12,6 +12,12 @@ const ForSaleSchema = new Schema({
   description: {
     type: String
   },
+  works: [{
+      type: String
+  }],
+  conclusion: {
+     type: String
+  },
   metres: {
     type: Number,
   },

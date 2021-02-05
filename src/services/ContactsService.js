@@ -41,8 +41,7 @@ export const sendMessageService = (body) => {
 
   const content = `Ім'я: ${user_name} \n 
       email: ${user_email} \n 
-      телефон: ${phone_number} \n 
-      Перетелефонуйте мені: ${call_me} \n 
+      телефон: ${phone_number} \n  
       Текст повідомлення: ${text}`
 
   const mailOptions = {

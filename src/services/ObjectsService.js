@@ -1,6 +1,11 @@
 import { ForSale } from '../models/ForSale';
 import { getRandomImg } from '../utils/get_images';
 import { filterObjArrMap } from '../utils/work_with_arrays';
+import { resizeImages } from '../utils/upload';
+
+const folder = 'objects';
+const mainImgType = 'main_image';
+const photosType = 'photos';
 
 export const getObjectService = (id) => {
     try {
@@ -19,12 +24,16 @@ export const getAllObjectsService = (query) => {
     return ForSale.find(filter);
 };
 
-export const createObjectService = (object, files) => {
+export const createObjectService = async(object, files) => {
     const newObject = new ForSale(object);
-    const photosPathsArray = filterObjArrMap(files.photos, 'path', 'objects');
+
+    const compressedPhotos = await resizeImages(files.photos, photosType, folder)
+    const photosPathsArray = filterObjArrMap(compressedPhotos, folder);
     newObject.photos = photosPathsArray;
+
     if (files.main_image) {
-        const mainImgPathsArray = filterObjArrMap(files.main_image, 'path', 'objects');
+        const compressedMainImage = await resizeImages(files.main_image, mainImgType, folder);
+        const mainImgPathsArray = filterObjArrMap(compressedMainImage, folder);
         newObject.main_image = mainImgPathsArray;
     }
     else {
@@ -33,26 +42,32 @@ export const createObjectService = (object, files) => {
     return newObject.save();
 };
 
-export const updateObjectService = (id, updatedObject, files) => {
+export const updateObjectService = async (id, updatedObject, files) => {
     let filter = {};
     if(files) {
         if(files.main_image && files.photos) {
-            // console.log(222, "Files")
-            const mainImgPathsArray = filterObjArrMap(files.main_image, 'path', 'objects');
-            const photosPathsArray = filterObjArrMap(files.photos, 'path', 'objects');
+           
+            const compressedMainImage = await resizeImages(files.main_image, mainImgType, folder)
+            const mainImgPathsArray = filterObjArrMap(compressedMainImage, folder);
+            
+            const compressedPhotos = await resizeImages(files.photos, photosType, folder)
+            const photosPathsArray = filterObjArrMap(compressedPhotos, folder);
+            
             filter = {
                 $set: updatedObject, main_image: mainImgPathsArray,
-                $push: { photos: photosPathsArray}
+                $push: { photos: photosPathsArray }
             };
         }
         else if (files.main_image) {
-            const mainImgPathsArray = filterObjArrMap(files.main_image, 'path', 'objects');
+            const compressedMainImage = await resizeImages(files.main_image, mainImgType, folder)
+            const mainImgPathsArray = filterObjArrMap(compressedMainImage, folder);
             filter = {
                 $set: updatedObject, main_image: mainImgPathsArray 
             };
         }
         else {
-            const photosPathsArray = filterObjArrMap(files.photos, 'path', 'objects');
+            const compressedPhotos = await resizeImages(files.photos, photosType, folder)
+            const photosPathsArray = filterObjArrMap(compressedPhotos, folder);
             filter = {
                 $set: updatedObject,
                 $push: { photos: photosPathsArray } 
@@ -60,7 +75,6 @@ export const updateObjectService = (id, updatedObject, files) => {
         }
     }
     else {
-    console.log(222, 'No files')
         filter = { $set: updatedObject };
     }
     return ForSale.findByIdAndUpdate(id, filter, { new: true });
@@ -69,3 +83,4 @@ export const updateObjectService = (id, updatedObject, files) => {
 export const deleteObjectService = (id) => {
     return ForSale.findById(id).remove();
 };
+

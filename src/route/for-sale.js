@@ -1,8 +1,9 @@
 import express from 'express';
 import passport from 'passport';
-
+//import cors from 'cors';
 import { getObjectController, getAllObjectsController, createObjectController, updateObjectController, deleteObjectController } from '../controllers/objectsController';
 import { objectsUpload } from '../utils/upload';
+//import corsOptions  from '../../config/cors';
 
 const router = express.Router();
 

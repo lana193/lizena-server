@@ -1,6 +1,11 @@
 import { Project } from '../models/Project';
 import { getRandomImg } from './../utils/get_images';
 import { filterObjArrMap } from './../utils/work_with_arrays';
+import { resizeImages } from '../utils/upload';
+
+const folder = 'projects';
+const mainImgType = 'main_image';
+const photosType = 'photos';
 
 export const getProjectService = (id) => {
     try {
@@ -25,12 +30,14 @@ export const getAllProjectsService = (query) => {
     return Project.find(filter);
 };
 
-export const createProjectService = (project, files) => {
+export const createProjectService = async (project, files) => {
     const newProject = new Project(project);
-    const photosPathsArray = filterObjArrMap(files.photos, 'linkUrl');
+    const compressedPhotos = await resizeImages(files.photos, photosType, folder)
+    const photosPathsArray = filterObjArrMap(compressedPhotos, folder);
     newProject.photos = photosPathsArray;
     if (files.main_image) {
-        const mainImgPathsArray = filterObjArrMap(files.main_image, 'linkUrl');
+        const compressedMainImage = await resizeImages(files.main_image, mainImgType, folder)
+        const mainImgPathsArray = filterObjArrMap(compressedMainImage, folder);
         newProject.main_image = mainImgPathsArray;
     }
     else {
@@ -39,25 +46,30 @@ export const createProjectService = (project, files) => {
     return newProject.save();
 };
 
-export const updateProjectService = (id, updatedProject, files) => {
+export const updateProjectService = async (id, updatedProject, files) => {
     let filter = {};
     if(files) {
         if(files.main_image && files.photos) {
-            const mainImgPathsArray = filterObjArrMap(files.main_image, 'linkUrl');
-            const photosPathsArray = filterObjArrMap(files.photos, 'linkUrl');
+            const compressedMainImage = await resizeImages(files.main_image, mainImgType, folder)
+            const mainImgPathsArray = filterObjArrMap(compressedMainImage, folder);
+            
+            const compressedPhotos = await resizeImages(files.photos, photosType, folder)
+            const photosPathsArray = filterObjArrMap(compressedPhotos, folder);
             filter = {
                 $set: updatedProject, main_image: mainImgPathsArray ,
                 $push: { photos: photosPathsArray}
             };
         }
         else if (files.main_image) {
-            const mainImgPathsArray = filterObjArrMap(files.main_image, 'linkUrl');
+            const compressedMainImage = await resizeImages(files.main_image, mainImgType, folder)
+            const mainImgPathsArray = filterObjArrMap(compressedMainImage, folder);
             filter = {
                 $set: updatedProject, main_image: mainImgPathsArray 
             };
         }
         else {
-            const photosPathsArray = filterObjArrMap(files.photos, 'linkUrl');
+            const compressedPhotos = await resizeImages(files.photos, photosType, folder)
+            const photosPathsArray = filterObjArrMap(compressedPhotos, folder);
             filter = {
                 $set: updatedProject,
                 $push: { photos: photosPathsArray } 
@@ -73,3 +85,4 @@ export const updateProjectService = (id, updatedProject, files) => {
 export const deleteProjectService = (id) => {
     return Project.findById(id).remove();
 };
+
