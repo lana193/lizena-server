@@ -5,6 +5,7 @@ import passport from 'passport';
 import path from 'path';
 import { initializeStrategy } from './src/middleware/passport';
 import config from './config/keys';
+import { hostname } from './config/base';
 import { projectsRouter } from './src/route/projects';
 import { authRouter } from './src/route/auth';
 import { contactsRouter } from './src/route/contacts';
@@ -49,10 +50,8 @@ app.use('/lizena', projectsRouter);
 app.use('/lizena', authRouter);
 app.use('/lizena', contactsRouter);
 app.use('/lizena', forSaleRouter);
-// app.use('/');
 app.use('*', (req, res) => res.status(404).send('Not found'));
 
-const hostname = '185.229.224.187';
 const port = process.env.PORT || 3003;
 
 app.listen(port, hostname, () => {
