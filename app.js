@@ -52,7 +52,7 @@ app.use('/lizena', forSaleRouter);
 // app.use('/');
 app.use('*', (req, res) => res.status(404).send('Not found'));
 
-const hostname = 'localhost';
+const hostname = '185.229.224.187';
 const port = process.env.PORT || 3003;
 
 app.listen(port, hostname, () => {
