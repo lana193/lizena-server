@@ -1,3 +1,5 @@
+import { baseUrl } from '../../config/base';
+
 export const filterObjArrReduce = ((objToFilter, key) => {
     const result = objToFilter.reduce((accumulator, item) => {
         accumulator.push(item[key]);
@@ -9,8 +11,8 @@ export const filterObjArrReduce = ((objToFilter, key) => {
 export const filterObjArrMap = ((objToFilter, folder) => {
     const result = objToFilter.map((item) => {
         const image = item;//[key].replace(/\\/g, "/");
-        console.log(333, image);
-        return `https://www.lizena.com.ua/uploads/${folder}/${image}`;
+        console.log('filterObjArr', image);
+        return `${baseUrl}/uploads/${folder}/${image}`;
     });
     return result;
 });

@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 
-import { getProjectController, getAllProjectsController, createProjectController, updateProjectController, deleteProjectController } from '../controllers/projectsController';
+import { getProjectController, getAllProjectsController, createProjectController, updateProjectController, deleteProjectController, updateProjectPhotosController } from '../controllers/projectsController';
 import { projectsUpload } from './../utils/upload';
 
 const router = express.Router();
@@ -31,5 +31,11 @@ router.put('/project/:id', passport.authenticate('jwt', { session: false }),
 // @desc    Delete project by id
 // @access  Public
 router.delete('/project/:id', passport.authenticate('jwt', { session: false }), deleteProjectController);
+
+// @route   PUT route/object/image
+// @desc    Add new image to the project
+// @access  Private only admin
+router.put('/project/:id/image/:img', passport.authenticate('jwt', { session: false }), 
+    projectsUpload.fields([{ name: 'photos', maxCount: 1 }]), updateProjectPhotosController);
   
 export const projectsRouter = router;

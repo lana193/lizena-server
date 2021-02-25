@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 
-// import { usersUpload } from './../utils/upload';
+import { usersUpload } from './../utils/upload';
 import { getUserController, getAllUsersController, createUserController, updateUserController, deleteUserController } from './../controllers/usersController';
 
 const router = express.Router();
@@ -26,7 +26,7 @@ router.post('/users', passport.authenticate('jwt', { session: false }), createUs
 // @route PUT route/users
 // @desc update user by id
 // @access Public
-// router.put('/users/:id', passport.authenticate('jwt', { session: false }), usersUpload.single('profile_image'), updateUserController);
+router.put('/users/:id', passport.authenticate('jwt', { session: false }), usersUpload.single('profile_image'), updateUserController);
 
 // @route DELETE route/users/id
 // @desc Delete User by id

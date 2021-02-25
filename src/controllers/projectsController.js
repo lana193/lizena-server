@@ -1,4 +1,4 @@
-import { getProjectService, getAllProjectsService, createProjectService, updateProjectService, deleteProjectService } from '../services/ProjectsService';
+import { getProjectService, getAllProjectsService, createProjectService, updateProjectService, deleteProjectService, updateProjectPhotosService } from '../services/ProjectsService';
 
 export const getProjectController = async (req, res) => {
     try {
@@ -44,7 +44,19 @@ export const createProjectController = async (req, res) => {
 
  export const deleteProjectController = async (req, res) => {
     try { res.json(await deleteProjectService(req.params.id));
-    } catch(e) {
-        res.status(400).send('Bad request');
-    }
- };
+   } catch(e) {
+      res.status(400).send('Bad request');
+   }
+};
+
+ export const updateProjectPhotosController = async (req, res) => {
+   console.log('PARAMS', req.params.img);
+   console.log('FILES', req.files);
+   try { res.json(await updateProjectPhotosService(req.params.id, req.params.img, req.files));
+   } catch(e) {
+      console.log('ERROR', e);
+      res.status(400).send('Bad request');
+   }
+};
+
+ 

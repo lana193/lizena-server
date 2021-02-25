@@ -41,7 +41,7 @@ export const resizeImages = async (files, type, folder) => {
           .toFile(`public/uploads/${folder}/${newFilename}`);
   
         compressedImages.push(newFilename);
-        console.log(555, compressedImages)
+        console.log('commpressedImages', compressedImages)
       })
     );
   

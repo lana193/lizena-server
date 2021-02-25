@@ -1,4 +1,4 @@
-import { getObjectService, getAllObjectsService, createObjectService, updateObjectService, deleteObjectService } from '../services/ObjectsService';
+import { getObjectService, getAllObjectsService, createObjectService, updateObjectService, deleteObjectService, updateObjectPhotosService } from '../services/ObjectsService';
 
 export const getObjectController = async (req, res) => {
     try {
@@ -32,7 +32,7 @@ export const createObjectController = async (req, res) => {
     
  };
 
- export const updateObjectController = async (req, res) => {
+export const updateObjectController = async (req, res) => {
     console.log(req.files);
     try { res.json(await updateObjectService(req.params.id, req.body, req.files));
     } catch(e) {
@@ -40,9 +40,19 @@ export const createObjectController = async (req, res) => {
     }
  };
 
- export const deleteObjectController = async (req, res) => {
-    try { res.json(await deleteObjectService(req.params.id));
-    } catch(e) {
+export const deleteObjectController = async (req, res) => {
+   try { res.json(await deleteObjectService(req.params.id));
+   } catch(e) {
         res.status(400).send('Bad request');
-    }
- };
+   }
+};
+
+export const updateObjectPhotosController = async (req, res) => {
+   console.log('PARAMS', req.params.img);
+   console.log('FILES', req.files);
+   try { res.json(await updateObjectPhotosService(req.params.id, req.params.img, req.files));
+   } catch(e) {
+      console.log('ERROR', e);
+      res.status(400).send('Bad request');
+   }
+};

@@ -1,7 +1,11 @@
+import fs from 'fs';
+
 import { Project } from '../models/Project';
 import { getRandomImg } from './../utils/get_images';
 import { filterObjArrMap } from './../utils/work_with_arrays';
 import { resizeImages } from '../utils/upload';
+import { directory } from '../../app';
+import { baseUrl } from '../../config/base';
 
 const folder = 'projects';
 const mainImgType = 'main_image';
@@ -9,7 +13,7 @@ const photosType = 'photos';
 
 export const getProjectService = (id) => {
     try {
-        return Project.findById(id).populate('owner', '-password');
+        return Project.findById(id);
     } catch(e) {
         throw new Error();
     }
@@ -56,7 +60,7 @@ export const updateProjectService = async (id, updatedProject, files) => {
             const compressedPhotos = await resizeImages(files.photos, photosType, folder)
             const photosPathsArray = filterObjArrMap(compressedPhotos, folder);
             filter = {
-                $set: updatedProject, main_image: mainImgPathsArray ,
+                $set: updatedProject, main_image: mainImgPathsArray,
                 $push: { photos: photosPathsArray}
             };
         }
@@ -86,3 +90,42 @@ export const deleteProjectService = (id) => {
     return Project.findById(id).remove();
 };
 
+export const updateProjectPhotosService = async (id, img, files) => {
+    const imgUrl = `${baseUrl}/uploads/${folder}/${img}`;
+    console.log('URL', imgUrl);
+    const imgPath = `${directory}/uploads/${folder}/${img}`;
+    console.log('imgPath', imgPath);
+
+    try {
+        fs.unlinkSync(imgPath);
+    } catch (e) {
+        console.error(e);
+    }
+
+    let filter = {};
+    let search = {};
+    if (files.photos) {
+        const compressedPhotos = await resizeImages(files.photos, photosType, folder)
+        const photosPathsArray = filterObjArrMap(compressedPhotos, folder);
+
+        search = { _id: id, photos: imgUrl };
+
+        filter = {
+            $set: {
+                "photos.$": photosPathsArray[0]
+            }
+        };
+    }
+    else {
+        console.log('In delete');
+        search = { _id: id };
+
+        filter = { 
+            $pull: {
+                photos: { $in: imgUrl }
+            }
+        };
+    }
+
+    return Project.findOneAndUpdate(search, filter, { returnNewDocument: true });
+};
