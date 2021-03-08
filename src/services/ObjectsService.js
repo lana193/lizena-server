@@ -45,8 +45,8 @@ export const createObjectService = async (object, files) => {
 };
 
 export const updateObjectService = async (id, updatedObject, files) => {
+    // console.log('updatedObject', updatedObject);
     let filter = {};
-    if (files) {
         if (files.main_image && files.photos) {
 
             const compressedMainImage = await resizeImages(files.main_image, mainImgType, folder)
@@ -67,7 +67,7 @@ export const updateObjectService = async (id, updatedObject, files) => {
                 $set: updatedObject, main_image: mainImgPathsArray
             };
         }
-        else {
+        else if (files.photos) {
             const compressedPhotos = await resizeImages(files.photos, photosType, folder)
             const photosPathsArray = filterObjArrMap(compressedPhotos, folder);
             filter = {
@@ -75,8 +75,8 @@ export const updateObjectService = async (id, updatedObject, files) => {
                 $push: { photos: photosPathsArray }
             };
         }
-    }
     else {
+        // console.log('Null prtotype');
         filter = { $set: updatedObject };
     }
     return ForSale.findByIdAndUpdate(id, filter, { new: true });

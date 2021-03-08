@@ -13,10 +13,11 @@ const ForSaleSchema = new Schema({
     type: String
   },
   works: [{
-      type: String
+      type: String,
+      default: []
   }],
   conclusion: {
-     type: String
+    type: String
   },
   metres: {
     type: Number,
